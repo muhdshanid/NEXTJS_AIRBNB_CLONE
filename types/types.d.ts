@@ -1,7 +1,7 @@
 import { Listing, Reservation, User } from "@prisma/client"
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form"
 import { IconType } from "react-icons"
-
+import { Range, RangeKeyDict } from "react-date-range"
 type ContainerProps = {
 
     children: React.ReactNode
@@ -81,6 +81,12 @@ User,
     emailVerified: string | null,
 }
 
+type SafeListing = Omit<
+Listing,
+"createdAt"> & {
+    createdAt: string,
+}
+
 type NavbarProps = {
     currentUser?: SafeUser | null
 }
@@ -145,8 +151,8 @@ type EmptyStateProps = {
 
 
 type ListingCardProps = {
-    listing: Listing,
-    reservation?: Reservation,
+    listing: SafeListing ,
+    reservation?: SafeReservation,
     onAction?: (id: string) => void,
     disabled?: boolean,
     actionLabel?: string,
@@ -163,4 +169,90 @@ type HeartButtonProps = {
 type UseFavorite = {
     listingId: string,
     currentUser?: SafeUser | null
+}
+
+
+type SingleListingProps = {
+    listing: SafeListing & {
+        user: SafeUser
+    },
+    currentUser?: SafeUser | null,
+    reservations?: SafeReservation[]
+}
+
+type ListingHeadProps = {
+    title: string,
+    imageSrc: string,
+    id: string,
+    locationValue: string,
+    currentUser?: SafeUser | null
+}
+
+type ListingInfoProps = {
+    user: SafeUser ,
+    category: {
+        icon: IconType,
+        label: string,
+        description: string
+    } | undefined,
+    desc: string,
+    roomCount: number,
+    guestCount: number,
+    bathroomCount: number,
+    locationValue: string
+}
+
+type ListingCategoryProps = {
+    icon: IconType,
+    label: string,
+    desc: string
+}
+
+type ListingReservationProps = {
+    price: number,
+    disabled: boolean,
+    dateRange: Range,
+    totalPrice: number,
+    onChangeDate: (value: Range) => void,
+    onSubmit: () => void,
+    disabledDates: Date[]
+}
+type CalendarProps = {
+    value: Range,
+    onChange: (value: RangeKeyDict) => void,
+    disabledDates?: Date[]
+}
+
+type SafeReservation = Omit<
+Reservation,
+"createdAt" |"startDate" | "endDate"
+> & {
+    createdAt: string,
+    startDate: string,
+    endDate: string,
+    listing: SafeListing
+}
+
+
+type TripsClientProps = {
+    reservations: SafeReservation[],
+    currentUser?: SafeUser | null
+}
+
+type ReservationClientProps = {
+    reservations: SafeReservation[],
+    currentUser?: SafeUser | null
+}
+type PropertiesClientProps = {
+    listings: SafeListing[],
+    currentUser?: SafeUser | null
+}
+
+type FavoriteClientProps = {
+    listings: SafeListing[],
+    currentUser?: SafeUser | null
+}
+
+type IListingParams = {
+    userId?: string
 }
