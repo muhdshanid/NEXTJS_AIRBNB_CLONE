@@ -3,6 +3,17 @@ import prisma from '@/libs/prismadb'
 import { authOptions } from "./session";
 
 
+interface IListingParams {
+
+    userId?: string,
+    startDate?: string,
+    endDate?: string,
+    locationValue?: string,
+    category?: string,
+    guestCount?: number,
+    roomCount?: number,
+    bathroomCount?: number,
+}
 
 export const getSession = async () => {
     return await getServerSession(authOptions)
@@ -29,16 +40,57 @@ export const getCurrentUser = async () => {
     }
 }
 
-export const getListings = async (params: { userId?: string}) => {
+export const getListings = async (params: IListingParams) => {
     
 
     try {
-        const {userId} = params
+        const {userId, startDate, endDate, roomCount, bathroomCount, locationValue, guestCount, category} = params
 
         let query: any = {}
 
         if(userId){
             query.userId = userId
+        }
+
+        if(category){
+            query.category = category
+        }
+        if(locationValue){
+            query.locationValue = locationValue
+        }
+        if(roomCount){
+            query.roomCount = {
+                gte: +roomCount
+            }
+        }
+        if(guestCount){
+            query.guestCount = {
+                gte: +guestCount
+            }
+        }
+        if(bathroomCount){
+            query.bathroomCount = {
+                gte: +bathroomCount
+            }
+        }
+
+        if(startDate && endDate){
+            query.NOT = {
+                reservations: {
+                    some: {
+                        OR: [
+                            {
+                                endDate: { gte: startDate},
+                                startDate: {lte: startDate}
+                            }, 
+                            {
+                                startDate: {lte: startDate},
+                                endDate: { gte: startDate}
+                            }
+                        ]
+                    }
+                }
+            }
         }
         const listings = await prisma.listing.findMany({
             where: query,
