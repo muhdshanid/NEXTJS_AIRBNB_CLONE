@@ -45,7 +45,7 @@ const ListingCard = ({
         return `${format(start, "PP")} - ${format(end, "PP")}`
     },[reservation])
   return (
-    <div className='col-span-1 cursor-pointer group' onClick={() => router.push(`/listings/${listing.id}`)}>
+    <div className='col-span-1 pt-20 cursor-pointer group' onClick={() => router.push(`/listings/${listing.id}`)}>
         <div className='flex flex-col gap-2 w-full'>
             <div className='aspect-square w-full relative overflow-hidden rounded-xl'>
                 <Image fill alt='listing' src={listing.imageSrc} 

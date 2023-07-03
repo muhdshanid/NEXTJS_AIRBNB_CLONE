@@ -1,3 +1,4 @@
+import { ContainerProps } from "@/types/types";
 import React from "react";
 
 const Container = ({ children }: ContainerProps) => {
